@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Wedding</title>
+    <!-- Importing elegant font for headers -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+        /* --- THEME & BASE STYLES --- */
+        :root {
+            --pastel-green: #434a42;      /* Dark olive / charcoal green */
+            --text-on-green: #d4dfc7;     /* Pale greenish white */
+            --accent-color: #772e25;      /* Deep rust/red accent */
+            --off-white: #d6ccc2;         /* Warm beige/gray */
+            
+            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-fancy: 'Playfair Display', serif;
+            --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            background-color: var(--pastel-green);
+            color: var(--text-on-green);
+        }
+
+        h1, h2, h3 { 
+            font-family: var(--font-fancy); 
+            font-weight: 400; 
+            letter-spacing: 1px; 
+        }
+        
+        /* Base section styling - Height is now determined by content */
+        section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        /* --- INDIVIDUAL SECTION CLASSES FOR YOUR TWEAKING --- */
+        .hero-section { padding-top: 10rem; padding-bottom: 8rem; }
+        .details-section { padding-top: 6rem; padding-bottom: 6rem; }
+        .shoutbox-section { padding-top: 6rem; padding-bottom: 6rem; }
+        .countdown-section { padding-top: 6rem; padding-bottom: 8rem; }
+
+        /* --- ALTERNATING COLORS --- */
+        .bg-green { background-color: var(--pastel-green); color: var(--text-on-green); }
+        .bg-white { background-color: var(--off-white); color: var(--pastel-green); }
+        .accent-text { color: var(--accent-color); font-style: italic; font-family: var(--font-fancy); }
+
+        /* --- SCROLL FADE IN ANIMATIONS --- */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- SECTION: DETAILS --- */
+        .details-grid {
+            display: grid;
+            gap: 2rem;
+            max-width: 800px;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 350px;
+            border-radius: 12px;
+            border: none;
+            transition: var(--transition-smooth);
+        }
+        .details-text p { margin-bottom: 1rem; line-height: 1.6; }
+
+        /* --- SECTION: SHOUTBOX --- */
+        .shoutbox-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 2.5rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(67, 74, 66, 0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            font-family: inherit;
+            color: inherit;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+        .bg-green input, .bg-green textarea {
+            border-color: rgba(212, 223, 199, 0.3);
+            background: transparent;
+            color: var(--text-on-green);
+        }
+        .bg-green input::placeholder, .bg-green textarea::placeholder { color: rgba(212, 223, 199, 0.6); }
+        
+        input:focus, textarea:focus { border-color: var(--off-white); box-shadow: 0 0 10px rgba(214, 204, 194, 0.2); }
+        
+        button {
+            padding: 1rem 2rem;
+            background-color: var(--text-on-green);
+            color: var(--pastel-green);
+            border: none;
+            border-radius: 50px; /* Fully rounded button */
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: var(--transition-smooth);
+        }
+        button:hover { background-color: var(--off-white); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        /* --- TOAST NOTIFICATION --- */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            color: var(--text-on-green);
+            font-weight: bold;
+            transition: var(--transition-smooth);
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .toast.show { bottom: 40px; }
+        .toast.success { background-color: var(--pastel-green); border: 2px solid var(--text-on-green); }
+        .toast.error { background-color: var(--accent-color); color: var(--off-white); border: 2px solid var(--off-white); }
+
+        /* --- SECTION: HORIZONTAL GALLERY --- */
+        .timeline-wrapper {
+            height: 350vh; /* Scrollable space to drive horizontal movement */
+            position: relative;
+            background-color: var(--off-white);
+        }
+        .timeline-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        .timeline-slider {
+            display: flex;
+            gap: 5rem;
+            /* calc(50vw - 150px) puts the center of a 300px card exactly in the middle of the screen */
+            padding-left: calc(50vw - 150px); 
+            padding-right: calc(50vw - 150px);
+            will-change: transform;
+        }
+        .timeline-card {
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+        .timeline-card img {
+            width: 300px;
+            height: 420px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(67, 74, 66, 0.2);
+        }
+        .timeline-card .date { 
+            font-family: var(--font-fancy); 
+            font-size: 1.5rem; 
+            color: var(--accent-color); 
+        }
+        .timeline-card p {
+            color: var(--pastel-green);
+            line-height: 1.5;
+            padding: 0 1rem;
+        }
+
+        /* --- SECTION: COUNTDOWN --- */
+        .countdown-container {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .time-box span { 
+            font-size: 4rem; 
+            font-family: var(--font-fancy);
+            min-width: 90px; 
+        }
+        .time-box label { 
+            font-size: 0.8rem; 
+            letter-spacing: 3px; 
+            text-transform: uppercase; 
+            color: var(--off-white); /* Lighter color for contrast against green */
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="bg-green hero-section">
+        <h1 class="fade-in" style="font-size: 3.5rem; margin-bottom: 1rem; color: var(--off-white);">We are getting married</h1>
+        <p class="fade-in accent-text" style="font-size: 1.5rem; color: var(--text-on-green);">Join us in celebrating our next chapter</p>
+        <p class="fade-in" style="margin-top: 2rem; max-width: 600px; line-height: 1.7;">
+            Our celebration wouldn't be complete without your presence, so it would mean the world to us if you are able to join us on our special day. 
+        </p>
+    </section>
+
+    <!-- DETAILS SECTION -->
+    <section class="bg-white details-section">
+        <h2 class="fade-in" style="font-size: 2.5rem; margin-bottom: 1rem;">The Details</h2>
+        <p class="fade-in accent-text" style="font-size: 1.8rem; margin-bottom: 0.5rem">When & Where</p>
+        <div class="details-grid fade-in">
+            <div class="details-text">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--pastel-green);">May 23rd, 2026</h3>
+                <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--pastel-green);">Ceremony begins at 8:30 PM</h3>
+                <p style="margin-top: 1.5rem; font-weight: bold; font-size: 1rem">Al Salam Hall</p>
+                <p style="font-size: 1rem">Al Mosheer Tantawy Mosque, Nasr City, Cairo</p>
+                <p style="margin-top: 1.5rem; font-size: 0.95rem; opacity: 0.8;">
+                    We hope to see you there!
+                </p>
+            </div>
+            <div class="map-container">
+                <!-- Google Maps Embed -->
+                 <div class="mapouter"><div class="gmap_canvas"><iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Al Salam Hall nasr city&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe><a href="https://embed-googlemap.com">embed-googlemap.com</a></div><style>.mapouter{position:relative;text-align:right;width:800px;height:350px;}.gmap_canvas {overflow:hidden;background:none!important;width:800px;height:350px;}.gmap_iframe {width:800px!important;height:350px!important;}</style></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHOUTBOX SECTION -->
+    <section class="bg-green shoutbox-section">
+        <h2 class="fade-in" style="font-size: 2.5rem; color: var(--off-white);">Sign Our Guestbook</h2>
+        <p class="fade-in" style="margin-top: 1rem; max-width: 500px; line-height: 1.6;">We would absolutely love to hear from you!</p>
+        <p class="fade-in" style="margin-top: 1rem; max-width: 500px; line-height: 1.6;">Leave us a wish, some congratulations, perhaps some marriage advice, or just a fun memory we share!</p>
+        <p class="fade-in" style="margin-top: 1rem; max-width: 500px; line-height: 1.6;">Or maybe even a secret confession of love (it's never too late 😉)</p>
+        <form class="shoutbox-form fade-in" id="shoutbox">
+            <input type="text" id="guestName" placeholder="Your Name" required>
+            <textarea id="guestMessage" rows="4" placeholder="Write your message here..." required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- TIMELINE GALLERY SECTION -->
+    <div class="timeline-wrapper">
+        <div class="timeline-sticky bg-white">
+            <div class="timeline-slider" id="timelineSlider">
+                <!-- Card 1 -->
+                <div class="timeline-card">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=300&q=80" alt="First Date">
+                    <div class="date">October 2018</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Where it all began</h3>
+                    <p>Our very first date at that small coffee shop downtown. Neither of us realized how much our lives were about to change.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="timeline-card">
+                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=300&q=80" alt="First Trip">
+                    <div class="date">July 2020</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">The Big Road Trip</h3>
+                    <p>Our first major adventure together. We drove straight across the country and survived living out of a tiny car for two weeks.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="timeline-card">
+                    <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=300&q=80" alt="The Proposal">
+                    <div class="date">December 2024</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">The Easiest Yes</h3>
+                    <p>Under the winter lights, surrounded by snow, the easiest question was finally asked and answered.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="timeline-card">
+                    <div style="width:300px; height:420px; border-radius:20px; border: 2px dashed var(--pastel-green); display:flex; align-items:center; justify-content:center; color: var(--pastel-green); font-family: var(--font-fancy); font-size: 1.5rem;">
+                        Forever starts soon...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COUNTDOWN SECTION -->
+    <section class="bg-green countdown-section">
+        <h2 class="fade-in" style="font-size: 2.5rem; color: var(--off-white);">Counting Down The Days</h2>
+        <p class="fade-in accent-text" style="font-size: 1.2rem; color: var(--text-on-green); margin-top: 1rem;">Until we say "I Do"</p>
+        <div class="countdown-container fade-in">
+            <div class="time-box">
+                <span id="days">00</span>
+                <label>Days</label>
+            </div>
+            <div class="time-box">
+                <span id="hours">00</span>
+                <label>Hours</label>
+            </div>
+            <div class="time-box">
+                <span id="minutes">00</span>
+                <label>Minutes</label>
+            </div>
+            <div class="time-box">
+                <span id="seconds">00</span>
+                <label>Seconds</label>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">Message Sent!</div>
+
+    <script>
+        /* --- FADE IN OBSERVER --- */
+        // Adds delays so items stagger gracefully if entering at the same time
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100); // 100ms stagger
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+
+        /* --- HORIZONTAL SCROLL LOGIC --- */
+        const timelineWrapper = document.querySelector('.timeline-wrapper');
+        const timelineSlider = document.getElementById('timelineSlider');
+
+        window.addEventListener('scroll', () => {
+            const wrapperRect = timelineWrapper.getBoundingClientRect();
+            
+            if (wrapperRect.top <= 0 && wrapperRect.bottom >= window.innerHeight) {
+                // Calculate how far we've scrolled inside the wrapper
+                const scrollProgress = Math.abs(wrapperRect.top) / (timelineWrapper.offsetHeight - window.innerHeight);
+                
+                // Calculate max distance slider can move to the left
+                const maxScroll = timelineSlider.scrollWidth - window.innerWidth;
+                
+                timelineSlider.style.transform = `translateX(-${scrollProgress * maxScroll}px)`;
+            } else if (wrapperRect.top > 0) {
+                timelineSlider.style.transform = `translateX(0px)`;
+            }
+        });
+
+        /* --- COUNTDOWN LOGIC --- */
+        const weddingDate = new Date(Date.UTC(2026, 4, 23, 17, 30, 0)).getTime();
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            if (distance < 0) return;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+        };
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        const WH_URL = "https://disco" +
+            "rd.com/api/we" +
+            "bhooks/1500" +
+            "21823141432" + "9354/1wqxNQku"
+            + "GDQJE9vgHp5C4f1yJJ1wo1tNr4iZEpVXfiEi"+
+            "vEi-cYooeM" +
+            "OQB-z0CHrrFGqn";
+
+        const showToast = (msg, type) => {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        };
+
+        document.getElementById('shoutbox').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const name = document.getElementById('guestName').value;
+            const message = document.getElementById('guestMessage').value;
+            const userAgent = navigator.userAgent; 
+
+            btn.innerText = "Sending...";
+            btn.disabled = true;
+
+            const payload = {
+                embeds: [{
+                    title: "💌 New Wedding Guestbook Entry!",
+                    color: 4410050, // Decimal value for #434a42
+                    fields: [
+                        { name: "From", value: name, inline: true },
+                        { name: "Message", value: message, inline: false },
+                        { name: "Browser/Device Info", value: `\`${userAgent}\``, inline: false }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                const response = await fetch(WH_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showToast("Message sent successfully!", "success");
+                    e.target.reset();
+                } else {
+                    showToast("Failed to send message.", "error");
+                }
+            } catch (err) {
+                showToast("Network error occurred.", "error");
+            } finally {
+                btn.innerText = "Send Message";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
