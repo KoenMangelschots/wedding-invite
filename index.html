@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Wedding</title>
-    <!-- Importing elegant font for headers -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
-        /* --- THEME & BASE STYLES --- */
         :root {
-            --pastel-green: #434a42;      /* Dark olive / charcoal green */
-            --text-on-green: #d4dfc7;     /* Pale greenish white */
-            --accent-color: #772e25;      /* Deep rust/red accent */
-            --off-white: #d6ccc2;         /* Warm beige/gray */
+            --pastel-green: #434a42;
+            --text-on-green: #d4dfc7;
+            --accent-color: #772e25;
+            --off-white: #d6ccc2;
             
             --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             --font-fancy: 'Playfair Display', serif;
@@ -39,7 +37,6 @@
             letter-spacing: 1px; 
         }
         
-        /* Base section styling - Height is now determined by content */
         section {
             display: flex;
             flex-direction: column;
@@ -48,18 +45,15 @@
             text-align: center;
         }
 
-        /* --- INDIVIDUAL SECTION CLASSES FOR YOUR TWEAKING --- */
         .hero-section { padding-top: 10rem; padding-bottom: 8rem; }
         .details-section { padding-top: 6rem; padding-bottom: 6rem; }
         .shoutbox-section { padding-top: 6rem; padding-bottom: 6rem; }
         .countdown-section { padding-top: 6rem; padding-bottom: 8rem; }
 
-        /* --- ALTERNATING COLORS --- */
         .bg-green { background-color: var(--pastel-green); color: var(--text-on-green); }
         .bg-white { background-color: var(--off-white); color: var(--pastel-green); }
         .accent-text { color: var(--accent-color); font-style: italic; font-family: var(--font-fancy); }
 
-        /* --- SCROLL FADE IN ANIMATIONS --- */
         .fade-in {
             opacity: 0;
             transform: translateY(40px);
@@ -70,7 +64,6 @@
             transform: translateY(0);
         }
 
-        /* --- SECTION: DETAILS --- */
         .details-grid {
             display: grid;
             gap: 2rem;
@@ -87,7 +80,6 @@
         }
         .details-text p { margin-bottom: 1rem; line-height: 1.6; }
 
-        /* --- SECTION: SHOUTBOX --- */
         .shoutbox-form {
             display: flex;
             flex-direction: column;
@@ -129,7 +121,6 @@
         }
         button:hover { background-color: var(--off-white); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        /* --- TOAST NOTIFICATION --- */
         .toast {
             position: fixed;
             bottom: -100px;
@@ -147,7 +138,6 @@
         .toast.success { background-color: var(--pastel-green); border: 2px solid var(--text-on-green); }
         .toast.error { background-color: var(--accent-color); color: var(--off-white); border: 2px solid var(--off-white); }
 
-        /* --- SECTION: HORIZONTAL GALLERY --- */
         .timeline-wrapper {
             height: 350vh; /* Scrollable space to drive horizontal movement */
             position: relative;
@@ -164,22 +154,27 @@
         .timeline-slider {
             display: flex;
             gap: 5rem;
-            /* calc(50vw - 150px) puts the center of a 300px card exactly in the middle of the screen */
-            padding-left: calc(50vw - 150px); 
+            padding-left: calc(50vw - 225px); 
             padding-right: calc(50vw - 150px);
             will-change: transform;
         }
         .timeline-card {
-            min-width: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
             text-align: center;
         }
-        .timeline-card img {
+        .timeline-card img.vertical {
             width: 300px;
-            height: 420px;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(67, 74, 66, 0.2);
+        }
+        .timeline-card img.horizontal {
+            width: 450px;
+            height: 300px;
             object-fit: cover;
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(67, 74, 66, 0.2);
@@ -194,8 +189,13 @@
             line-height: 1.5;
             padding: 0 1rem;
         }
+        .timeline-card p a {
+            color: var(--pastel-green);
+            font-weight: bold;
+            font-style: italic;
+            text-decoration: none;
+        }
 
-        /* --- SECTION: COUNTDOWN --- */
         .countdown-container {
             display: flex;
             gap: 3rem;
@@ -217,7 +217,7 @@
             font-size: 0.8rem; 
             letter-spacing: 3px; 
             text-transform: uppercase; 
-            color: var(--off-white); /* Lighter color for contrast against green */
+            color: var(--off-white);
             opacity: 0.8;
             margin-top: 0.5rem;
         }
@@ -226,7 +226,6 @@
 </head>
 <body>
 
-    <!-- HERO SECTION -->
     <section class="bg-green hero-section">
         <h1 class="fade-in" style="font-size: 3.5rem; margin-bottom: 1rem; color: var(--off-white);">We are getting married</h1>
         <p class="fade-in accent-text" style="font-size: 1.5rem; color: var(--text-on-green);">Join us in celebrating our next chapter</p>
@@ -235,7 +234,6 @@
         </p>
     </section>
 
-    <!-- DETAILS SECTION -->
     <section class="bg-white details-section">
         <h2 class="fade-in" style="font-size: 2.5rem; margin-bottom: 1rem;">The Details</h2>
         <p class="fade-in accent-text" style="font-size: 1.8rem; margin-bottom: 0.5rem">When & Where</p>
@@ -250,13 +248,11 @@
                 </p>
             </div>
             <div class="map-container">
-                <!-- Google Maps Embed -->
                  <div class="mapouter"><div class="gmap_canvas"><iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Al Salam Hall nasr city&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe><a href="https://embed-googlemap.com">embed-googlemap.com</a></div><style>.mapouter{position:relative;text-align:right;width:800px;height:350px;}.gmap_canvas {overflow:hidden;background:none!important;width:800px;height:350px;}.gmap_iframe {width:800px!important;height:350px!important;}</style></div>
             </div>
         </div>
     </section>
 
-    <!-- SHOUTBOX SECTION -->
     <section class="bg-green shoutbox-section">
         <h2 class="fade-in" style="font-size: 2.5rem; color: var(--off-white);">Sign Our Guestbook</h2>
         <p class="fade-in" style="margin-top: 1rem; max-width: 500px; line-height: 1.6;">We would absolutely love to hear from you!</p>
@@ -269,42 +265,82 @@
         </form>
     </section>
 
-    <!-- TIMELINE GALLERY SECTION -->
     <div class="timeline-wrapper">
         <div class="timeline-sticky bg-white">
             <div class="timeline-slider" id="timelineSlider">
-                <!-- Card 1 -->
                 <div class="timeline-card">
-                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=300&q=80" alt="First Date">
-                    <div class="date">October 2018</div>
-                    <h3 class="accent-text" style="font-size: 1.2rem;">Where it all began</h3>
-                    <p>Our very first date at that small coffee shop downtown. Neither of us realized how much our lives were about to change.</p>
+                    <img class="horizontal" src="assets/2024_02_1.jpg">
+                    <div class="date">February 2024</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">The first meetup</h3>
+                    <p>Credit to <a href="https://www.whoismiette.com/">@whoismiette</a></p>
                 </div>
-                <!-- Card 2 -->
                 <div class="timeline-card">
-                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=300&q=80" alt="First Trip">
-                    <div class="date">July 2020</div>
-                    <h3 class="accent-text" style="font-size: 1.2rem;">The Big Road Trip</h3>
-                    <p>Our first major adventure together. We drove straight across the country and survived living out of a tiny car for two weeks.</p>
+                    <img class="horizontal" src="assets/2024_02_2.png">
+                    <div class="date">February 2024</div>
+                    <p>Credit to <a href="https://www.whoismiette.com/">@whoismiette</a></p>
                 </div>
-                <!-- Card 3 -->
                 <div class="timeline-card">
-                    <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=300&q=80" alt="The Proposal">
-                    <div class="date">December 2024</div>
-                    <h3 class="accent-text" style="font-size: 1.2rem;">The Easiest Yes</h3>
-                    <p>Under the winter lights, surrounded by snow, the easiest question was finally asked and answered.</p>
+                    <img class="vertical" src="assets/2024_02_3.png">
+                    <div class="date">February 2024</div>
+                    <p>Credit to <a href="https://www.whoismiette.com/">@whoismiette</a></p>
                 </div>
-                <!-- Card 4 -->
                 <div class="timeline-card">
-                    <div style="width:300px; height:420px; border-radius:20px; border: 2px dashed var(--pastel-green); display:flex; align-items:center; justify-content:center; color: var(--pastel-green); font-family: var(--font-fancy); font-size: 1.5rem;">
+                    <img class="vertical" src="assets/2024_07_1.jpg">
+                    <div class="date">July 2024</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Hana's graduation</h3>
+                </div>
+                <div class="timeline-card">
+                    <img class="horizontal" src="assets/2025_04_1.jpg">
+                    <div class="date">April 2025</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Meeting the parents</h3>
+                </div>
+                <div class="timeline-card">
+                    <img class="horizontal" src="assets/2025_04_2.jpg">
+                    <div class="date">April 2025</div>
+                </div>
+                <div class="timeline-card">
+                    <img class="horizontal" src="assets/2025_04_3.jpg">
+                    <div class="date">April 2025</div>
+                </div>
+                <div class="timeline-card">
+                    <img class="horizontal" src="assets/2025_06_1.jpg">
+                    <div class="date">June 2025</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Making it official</h3>
+                </div>
+                <div class="timeline-card">
+                    <img class="vertical" src="assets/2025_06_2.jpg">
+                    <div class="date">June 2025</div>
+                </div>
+                <div class="timeline-card">
+                    <img class="horizontal" src="assets/2025_11_1.jpg">
+                    <div class="date">November 2025</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Koen's 25th birthday</h3>
+                </div>
+                <div class="timeline-card">
+                    <img class="horizontal" src="assets/2025_12_1.jpg">
+                    <div class="date">December 2025</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Visiting Belgium</h3>
+                </div>
+                <div class="timeline-card">
+                    <img class="vertical" src="assets/2025_12_2.jpg">
+                    <div class="date">December 2025</div>
+                </div>
+                <div class="timeline-card">
+                    <img class="vertical" src="assets/2026_03_1.jpg">
+                    <div class="date">March 2026</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Getting the paperwork ready...</h3>
+                </div>
+                <div class="timeline-card">
+                    <div class="vertical" style="width:300px; height:420px; border-radius:20px; border: 2px dashed var(--pastel-green); display:flex; align-items:center; justify-content:center; color: var(--pastel-green); font-family: var(--font-fancy); font-size: 1.5rem;">
                         Forever starts soon...
                     </div>
+                    <div class="date">May 2026</div>
+                    <h3 class="accent-text" style="font-size: 1.2rem;">Saying "I do" (hopefully 🤞)</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- COUNTDOWN SECTION -->
     <section class="bg-green countdown-section">
         <h2 class="fade-in" style="font-size: 2.5rem; color: var(--off-white);">Counting Down The Days</h2>
         <p class="fade-in accent-text" style="font-size: 1.2rem; color: var(--text-on-green); margin-top: 1rem;">Until we say "I Do"</p>
@@ -328,12 +364,9 @@
         </div>
     </section>
 
-    <!-- TOAST NOTIFICATION -->
     <div id="toast" class="toast">Message Sent!</div>
 
     <script>
-        /* --- FADE IN OBSERVER --- */
-        // Adds delays so items stagger gracefully if entering at the same time
         const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
@@ -348,7 +381,6 @@
 
         document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 
-        /* --- HORIZONTAL SCROLL LOGIC --- */
         const timelineWrapper = document.querySelector('.timeline-wrapper');
         const timelineSlider = document.getElementById('timelineSlider');
 
@@ -368,7 +400,6 @@
             }
         });
 
-        /* --- COUNTDOWN LOGIC --- */
         const weddingDate = new Date(Date.UTC(2026, 4, 23, 17, 30, 0)).getTime();
 
         const updateCountdown = () => {
