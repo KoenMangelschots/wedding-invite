@@ -494,40 +494,70 @@
             e.preventDefault();
             const btn = e.target.querySelector('button');
             const name = document.getElementById('guestName').value;
-            const message = document.getElementById('guestMessage').value;
+            let message = document.getElementById('guestMessage').value.trim();
             const userAgent = navigator.userAgent; 
 
             btn.innerText = "Sending...";
             btn.disabled = true;
 
-            const payload = {
-                embeds: [{
-                    title: "💌 New Wedding Guestbook Entry!",
-                    color: 4410050, 
-                    fields: [
-                        { name: "From", value: name, inline: true },
-                        { name: "Message", value: message, inline: false },
-                        { name: "Browser/Device Info", value: `\`${userAgent}\``, inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
-            };
+
+            const chunkSize = 1000;
+            const messageChunks = [];
+            for (let i = 0; i < message.length; i += chunkSize) {
+                messageChunks.push(message.substring(i, i + chunkSize));
+            }
 
             try {
-                const response = await fetch(WH_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                for (let i = 0; i < messageChunks.length; i++) {
+                    const isFirst = i === 0;
+                    const isLast = i === messageChunks.length - 1;
 
-                if (response.ok) {
-                    showToast("Message sent successfully!", "success");
-                    e.target.reset();
-                } else {
-                    showToast("Failed to send message.", "error");
+                    const fields = [];
+                    
+                    if (isFirst) {
+                        fields.push({ name: "From", value: name, inline: true });
+                    }
+
+                    fields.push({ 
+                        name: isFirst ? "Message" : `Message (Part ${i + 1})`, 
+                        value: messageChunks[i], 
+                        inline: false 
+                    });
+
+                    if (isLast) {
+                        fields.push({ name: "Browser/Device Info", value: `\`${userAgent}\``, inline: false });
+                    }
+
+                    const payload = {
+                        embeds: [{
+                            title: isFirst ? "💌 New Wedding Guestbook Entry!" : "💌 Guestbook Entry (Continued)",
+                            color: 4410050, 
+                            fields: fields,
+                            timestamp: isLast ? new Date().toISOString() : undefined
+                        }]
+                    };
+
+                    const response = await fetch(WH_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to send part ${i + 1}`);
+                    }
+
+                    if (!isLast) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
                 }
+
+                showToast("Message sent successfully!", "success");
+                e.target.reset();
+
             } catch (err) {
-                showToast("Network error occurred.", "error");
+                console.error("Webhook Error:", err);
+                showToast("Network error occurred or message failed.", "error");
             } finally {
                 btn.innerText = "Send Message";
                 btn.disabled = false;
